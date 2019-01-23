@@ -4,11 +4,14 @@
 #include <powrprof.h>
 #include <thread>
 #include <chrono>
+#include <iostream>
 
 PowerProfileWatcher::PowerProfileWatcher()
 {
 	GUID *activeScheme;
 	GUID targetScheme;
+
+	std::cout << "Welcome to the power profile watcher" << std::endl;
 
 	for (int i = 0; ; i++)
 	{
@@ -42,13 +45,25 @@ PowerProfileWatcher::PowerProfileWatcher()
 
 	while (true)
 	{
+		WCHAR *activeSchemeName = NULL;
 		DWORD activeSchemeResult = PowerGetActiveScheme(NULL, &activeScheme);
 		if (activeSchemeResult == ERROR_SUCCESS)
 		{
+			DWORD activeSchemeNameBufferSize;
+			if (PowerReadFriendlyName(NULL, activeScheme, NULL, NULL, NULL, &activeSchemeNameBufferSize) == ERROR_SUCCESS)
+			{
+				activeSchemeName = new WCHAR[activeSchemeNameBufferSize];
+				PowerReadFriendlyName(NULL, activeScheme, NULL, NULL, (UCHAR*)activeSchemeName, &activeSchemeNameBufferSize);
+			}
 			if (*activeScheme != targetScheme)
 			{
+				if (activeSchemeName != NULL)
+				{
+					std::wcout << L"The active scheme was changed from \"" << activeSchemeName << "\" to \"Ultimate Performance\"" << std::endl;
+				}
 				PowerSetActiveScheme(NULL, &targetScheme);
 			}
+			delete[] activeSchemeName;
 		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(60000));
 	}
