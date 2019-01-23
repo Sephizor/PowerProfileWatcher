@@ -157,6 +157,7 @@
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="PowerProfileWatcher.h" />
+    <ClInclude Include="Resources\resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
@@ -167,6 +168,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="PowerProfileWatcher.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resources\Resource.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
