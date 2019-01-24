@@ -10,8 +10,15 @@ PowerProfileWatcher::PowerProfileWatcher()
 {
 	GUID *activeScheme;
 	GUID targetScheme;
+	time_t currentTime;
+	struct tm timeInfo;
+	char timeBuffer[80];
 
-	std::cout << "Welcome to the power profile watcher" << std::endl;
+	time(&currentTime);
+	localtime_s(&timeInfo, &currentTime);
+	strftime(timeBuffer, 80, "[%H:%M:%S]: ", &timeInfo);
+
+	std::cout << timeBuffer << "Welcome to the power profile watcher" << std::endl;
 
 	for (int i = 0; ; i++)
 	{
@@ -45,8 +52,11 @@ PowerProfileWatcher::PowerProfileWatcher()
 
 	while (true)
 	{
+		time(&currentTime);
+		localtime_s(&timeInfo, &currentTime);
 		WCHAR *activeSchemeName = NULL;
 		DWORD activeSchemeResult = PowerGetActiveScheme(NULL, &activeScheme);
+
 		if (activeSchemeResult == ERROR_SUCCESS)
 		{
 			DWORD activeSchemeNameBufferSize;
@@ -59,7 +69,12 @@ PowerProfileWatcher::PowerProfileWatcher()
 			{
 				if (activeSchemeName != NULL)
 				{
-					std::wcout << L"The active scheme was changed from \"" << activeSchemeName << "\" to \"Ultimate Performance\"" << std::endl;
+					strftime(timeBuffer, 80, "[%H:%M:%S]: ", &timeInfo);
+					std::wcout << timeBuffer
+						<< L"The active scheme was changed from \""
+						<< activeSchemeName
+						<< "\" to \"Ultimate Performance\""
+						<< std::endl;
 				}
 				PowerSetActiveScheme(NULL, &targetScheme);
 			}
